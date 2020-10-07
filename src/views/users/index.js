@@ -1,53 +1,24 @@
-import React from 'react';
-import {Container, Table, Button} from 'reactstrap';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import DataTable from 'views/DataTable';
 
 function Index() {
+  const [users, setUsers] = useState([]);
+  const [usersList, setUsersList] = useState({});
+  const [selectedPage, setSelectedPage] = useState(1);
+
+  const handleSelected = (pageNumber) => setSelectedPage(pageNumber);
+
+  useEffect(() => {
+    axios.get(`https://reqres.in/api/users?page=${selectedPage}`)
+      .then(response => {
+        setUsers(response.data.data)
+        setUsersList(response.data);
+      });
+  }, [selectedPage]);
+
   return (
-    <Container>
-      <div className="mt-3 text-right">
-        <Button color="primary">+ Add User</Button>
-      </div>
-
-      <Table className="mt-3">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Profile</th>
-            <th>Email</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th />
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td />
-            <td />
-            <td>Mark</td>
-            <td>Otto</td>
-            <td />
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td />
-            <td />
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td />
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td />
-            <td />
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td />
-          </tr>
-        </tbody>
-      </Table>
-    </Container>
+    <DataTable users={users} usersList={usersList} handleSelected={handleSelected} />
   );
 }
 

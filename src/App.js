@@ -2,8 +2,8 @@ import 'styles/main.scss';
 import React from 'react';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import {Page} from 'components/Pages';
-import Home from 'views/home';
-import Users from 'views/users';
+import Home from 'views/Home';
+import Users from 'views/Users';
 
 function App() {
   return (
@@ -17,7 +17,7 @@ function App() {
             <Route path="/users">
               <Users />
             </Route>
-            <Route path="*">404</Route>
+            <Route path="*">Page Not Found</Route>
           </Switch>
         </Page>
       </Router>
