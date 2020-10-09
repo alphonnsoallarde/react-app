@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from 'reactstrap';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 
 import { UserModalTypes } from 'constants/modals.js';
 import AddUser from 'views/Modals/Users/AddUser';
@@ -22,18 +23,40 @@ export default function Modals({
   const [modal, setModal] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [closeModal, setCloseModal] = useState(false);
+  const [userInfo, setUserInfo] = useState({ 
+    email: '', firstName: '', lastName: '' 
+  });
+  const [responseStatus, setResponseStatus] = useState(null);
 
   const toggle = () => setModal(!modal);
 
   const toggleConfirmationModal = () => {
     setConfirmationModal(!confirmationModal);
     setCloseModal(false);
+
+    if (confirmationModal) window.location.reload();
   }
 
   const toggleAll = () => {
     setConfirmationModal(!confirmationModal);
     setCloseModal(true);
   }
+
+  const fetchUserData = () => {
+    axios.get(`https://reqres.in/api/users/${userId}`)
+      .then(response => {
+        setUserInfo({
+          email: response.data.data.email,
+          firstName: response.data.data.first_name,
+          lastName: response.data.data.last_name
+        });
+      });
+  };
+
+  const handleCreateUser = (e) => setUserInfo({
+    ...userInfo,
+    [e.target.name]: e.target.value
+  });
 
   const Modal = actionType ? MODALS[actionType] : <div />;
 
@@ -42,13 +65,18 @@ export default function Modals({
       <div className="text-right">
         <Button className="mt-2" color={buttonColor} onClick={toggle}>{buttonLabel}</Button>
       </div>
-      <Modal userId={userId}
+      <Modal userInfo={userInfo}
+        userId={userId}
         modal={modal}
         confirmationModal={confirmationModal}
         toggle={toggle}
         toggleConfirmationModal={toggleConfirmationModal}
         toggleAll={toggleAll}
-        closeModal={closeModal} />
+        closeModal={closeModal}
+        fetchUserData={fetchUserData}
+        handleCreateUser={handleCreateUser}
+        responseStatus={responseStatus}
+        setResponseStatus={setResponseStatus} />
     </div>
   );
 }
